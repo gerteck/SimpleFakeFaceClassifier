@@ -270,4 +270,4 @@ display(Image(img1_dir + '/' + img1_name, width = 250, height = 250))
 
 
 
-All credit and reference materials from DSTA Hackathon Workshop Organisers. Adapted to operate localy on PyCharm
+Credit and reference materials from DSTA Hackathon Workshop Organisers. Adapted to operate locally on PyCharm
