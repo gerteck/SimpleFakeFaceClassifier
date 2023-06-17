@@ -180,6 +180,91 @@ interface in Python.
 
 Here, we will be using the Logisitic Regression Model
 
+To train the model on the training set:
+
+```python
+model = sklearn.linear_model.LogisticRegression(verbose=True, max_iter = 100)
+model.fit(train_data, train_labels)
+```
+
+## Evaluating the Model Trained
+Make predictions on the validation set and Calcuate accuracy of the model 
+(number of correct predictions / total number of predictions)
+```python
+predictions = model.predict(val_data)
+accuracy = sklearn.metrics.accuracy_score(val_labels, predictions) * 100
+print("Model accuracy = ", accuracy, "%")
+```
+
+Next, we may want to visualise the misclassified images to better understand failures.
+- Display misclassified fake images - Fake images that are classified as Real
+- Display misclassified real images - Real images that are classified as Fake
+- Display correctly classified fake images
+
+```python
+# Find misclassified images
+misclass_fake_images = []
+misclass_real_images = []
+
+#get index of wrongly classify images
+misclass_index = np.where(predictions != val_labels)
+
+for index in misclass_index[0]:
+    if val_labels[index] == FAKE_CLASS:
+        #False Negative (Fake predicted as Real)
+        misclass_fake_images.append(index)
+    else:
+        #False Positive (Real predicted as Fake)
+        misclass_real_images.append(index)
+        
+truepos_images = []
+truepos_index = np.where(predictions == val_labels)
+
+#True Positive (Correctly classified fake images)
+for index in truepos_index[0]:
+    if val_labels[index] == FAKE_CLASS:
+        #True Negative
+        truepos_images.append(index)
+
+
+print("False Negative Images")
+num_to_show = min(10, len(misclass_fake_images))
+fig, plot = plt.subplots(1, num_to_show, figsize=(40,4))
+for count, index in enumerate(misclass_fake_images[:num_to_show]):
+    reshaped = np.reshape(val_data[index], (WIDTH,HEIGHT))
+    plot[count].imshow(reshaped, cmap='gray', vmin=0, vmax=1)
+
+
+print("False Positive Images")
+num_to_show = min(10, len(misclass_real_images))
+fig, plot = plt.subplots(1, num_to_show, figsize=(40,4))
+for count, index in enumerate(misclass_real_images[:num_to_show]):
+    reshaped = np.reshape(val_data[index], (WIDTH,HEIGHT))
+    plot[count].imshow(reshaped, cmap='gray', vmin=0, vmax=1)
+
+print("True Positive Images")
+num_to_show = min(10, len(truepos_images))
+fig, plot = plt.subplots(1, num_to_show, figsize=(40,4))
+for count, index in enumerate(truepos_images[:num_to_show]):
+    reshaped = np.reshape(val_data[index], (WIDTH,HEIGHT))
+    plot[count].imshow(reshaped, cmap='gray', vmin=0, vmax=1)
+
+#Try your own directory and image filename
+img1_dir = 'data/validation/ffhq'
+img1_name = '00509.png'
+np_img1 = format_data(img1_dir, img1_name)
+#Print prediction
+print(model.predict([np_img1]))
+display(Image(img1_dir + '/' + img1_name, width = 250, height = 250))
+
+#Try your own directory and image filename
+img1_dir = 'data/validation/stylegan2'
+img1_name = '000559.png'
+np_img1 = format_data(img1_dir, img1_name)
+#Print prediction
+print(model.predict([np_img1]))
+display(Image(img1_dir + '/' + img1_name, width = 250, height = 250))
+```
 
 
 

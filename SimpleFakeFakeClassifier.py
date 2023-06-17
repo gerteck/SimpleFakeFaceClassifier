@@ -113,3 +113,54 @@ def load_files(pos_train_dir, neg_train_dir, pos_val_dir, neg_val_dir):
 
 
 train_data, train_labels, val_data, val_labels = load_files(POS_TRAIN_DIR, NEG_TRAIN_DIR, POS_VAL_DIR, NEG_VAL_DIR)
+
+model = sklearn.linear_model.LogisticRegression(verbose=True, max_iter = 100)
+model.fit(train_data, train_labels)
+
+predictions = model.predict(val_data)
+accuracy = sklearn.metrics.accuracy_score(val_labels, predictions) * 100
+print("Model accuracy = ", accuracy, "%")
+
+misclass_fake_images = []
+misclass_real_images = []
+
+# get index of wrongly classify images
+misclass_index = np.where(predictions != val_labels)
+
+for index in misclass_index[0]:
+    if val_labels[index] == FAKE_CLASS:
+        # False Negative (Fake predicted as Real)
+        misclass_fake_images.append(index)
+    else:
+        # False Positive (Real predicted as Fake)
+        misclass_real_images.append(index)
+
+truepos_images = []
+truepos_index = np.where(predictions == val_labels)
+
+# True Positive (Correctly classified fake images)
+for index in truepos_index[0]:
+    if val_labels[index] == FAKE_CLASS:
+        # True Negative
+        truepos_images.append(index)
+
+print("False Negative Images")
+num_to_show = min(10, len(misclass_fake_images))
+fig, plot = plt.subplots(1, num_to_show, figsize=(40, 4))
+for count, index in enumerate(misclass_fake_images[:num_to_show]):
+    reshaped = np.reshape(val_data[index], (WIDTH, HEIGHT))
+    plot[count].imshow(reshaped, cmap='gray', vmin=0, vmax=1)
+
+print("False Positive Images")
+num_to_show = min(10, len(misclass_real_images))
+fig, plot = plt.subplots(1, num_to_show, figsize=(40, 4))
+for count, index in enumerate(misclass_real_images[:num_to_show]):
+    reshaped = np.reshape(val_data[index], (WIDTH, HEIGHT))
+    plot[count].imshow(reshaped, cmap='gray', vmin=0, vmax=1)
+
+print("True Positive Images")
+num_to_show = min(10, len(truepos_images))
+fig, plot = plt.subplots(1, num_to_show, figsize=(40, 4))
+for count, index in enumerate(truepos_images[:num_to_show]):
+    reshaped = np.reshape(val_data[index], (WIDTH, HEIGHT))
+    plot[count].imshow(reshaped, cmap='gray', vmin=0, vmax=1)
