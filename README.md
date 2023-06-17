@@ -16,12 +16,66 @@ import sklearn.linear_model #contain multiple machine learning functions
 #More info: https://scikit-learn.org/stable/modules/classes.html#module-sklearn.linear_model
 
 import matplotlib.pyplot as plt
-%matplotlib inline
+
+# %matplotlib inline ( inline magic command for jupyter notebook if  operating on google colab.)
+
 import scikitplot as skplt #for advance visualisation of model performance
 from tqdm import tqdm
 from IPython.display import Image, display
 import gdown
 
+```
+
+Next, download the dataset and unzip the data set
+
+```python
+#Downloading our compressed dataset
+gdown.download("https://drive.google.com/file/d/1TSH3rgWLQF4kopKE61neK0oemdOzHNEv/view?usp=drive_link", output="data.zip", quiet=False, fuzzy=True)
+# Unzip the files on allocated colab directory
+unzip -o -q data.zip -d data
+```
+
+## Examples of Images in the Dataset:
+Install Pillow or PIL in Pycharm or IDE
+```commandline
+$ pip install pillow
+```
+```python
+from PIL import Image
+print("Flickr Real Image")
+with Image.open('data/train/ffhq/00032.png') as img:
+    img.show()
+
+print("StyleGan2 Fake Image")
+with Image.open('data/train/stylegan2/000005.png') as img:
+    img.show()
+```
+
+
+
+## Dataset Statistics:
+ffhq (positive/real images) 500 images for training and 500 images for validation
+
+stylegan2 (negative/fake images) 500 images for training and 500 images for validation
+
+**Note:** FFHQ stands for Flickr-Faces-HQ, a high quality image data set of human faces created originally 
+as a benchmark for generative adversarial networks (GAN). (Real Photos) StyleGAN2 on the other hand makes 
+use of the different resolution features maps generated in the architecture and uses skip connections to 
+connect low-res feature maps to final generated image. (AI-Generated Faces.)
+
+```python
+file_path = "./data"
+for dirpath, dirnames, filenames in os.walk(file_path):
+    N_c = len(filenames)
+    print("No. of files in ", dirpath, "is", N_c)
+
+#Training Set
+NEG_TRAIN_DIR = "data/train/ffhq"
+POS_TRAIN_DIR = "data/train/stylegan2"
+
+#Validation Set
+NEG_VAL_DIR = "data/validation/ffhq"
+POS_VAL_DIR = "data/validation/stylegan2"
 ```
 
 
@@ -45,9 +99,4 @@ import gdown
 
 
 
-
-
-
-
-
-All credit and reference materials from DSTA Hackathon Workshop Organisers.
+All credit and reference materials from DSTA Hackathon Workshop Organisers. Adapted to operate localy on PyCharm
